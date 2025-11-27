@@ -11,7 +11,7 @@
     </div>
 
     @if ($posts->count())
-        @foreach ($posts as $post)
+        @foreach ($posts as $post) 
             <div class="card mb-3">
                 @if (!empty($post->image_path))
                     <img src="{{ asset('storage/' . $post->image_path) }}" class="card-img-top" alt="{{ $post->title }}">

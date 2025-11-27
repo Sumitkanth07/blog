@@ -8,7 +8,7 @@
         @auth
             <a href="{{ route('posts.create') }}" class="btn btn-primary">+ New Post</a>
         @endauth
-    </div>
+    </div> 
 
     @if ($posts->count())
         @foreach ($posts as $post) 

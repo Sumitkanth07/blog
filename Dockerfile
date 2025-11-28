@@ -13,14 +13,11 @@ COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 # Set working directory inside the container
 WORKDIR /var/www/html
 
-# Copy only composer files first (for faster builds)
-COPY blog-laravel/composer.json blog-laravel/composer.lock ./
-
-# Install PHP dependencies
-RUN composer install --no-dev --optimize-autoloader
-
-# Now copy the full Laravel application from blog-laravel folder
+# Copy the full Laravel application from blog-laravel folder
 COPY blog-laravel ./
+
+# Install PHP dependencies (now artisan is present)
+RUN composer install --no-dev --optimize-autoloader
 
 # Create .env from .env.example and generate app key
 RUN cp .env.example .env && php artisan key:generate

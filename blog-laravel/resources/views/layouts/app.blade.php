@@ -17,7 +17,7 @@
             letter-spacing: 0.5px;
         }
         .page-wrapper {
-            max-width: 900px;
+            max-width: 950px;
             margin: 30px auto 40px;
         }
         .card {
@@ -38,6 +38,23 @@
             border-radius: 50%;
             object-fit: cover;
             margin-right: 8px;
+        }
+
+        /* 🔽 Home page post styling */
+        .home-post-card {
+            overflow: hidden;
+        }
+        .home-post-thumb {
+            width: 100%;
+            height: 160px;
+            object-fit: cover;
+            border-radius: 10px 0 0 10px;
+        }
+        @media (max-width: 768px) {
+            .home-post-thumb {
+                height: 200px;
+                border-radius: 10px 10px 0 0;
+            }
         }
     </style>
 </head>
@@ -67,15 +84,11 @@
                             <img src="{{ auth()->user()->avatar }}" alt="Avatar" class="nav-avatar">
                         @endif
 
-                        <span class="text-light me-2">
-                            {{ auth()->user()->name }}
-                        </span>
+                        <span class="text-light me-2">{{ auth()->user()->name }}</span>
 
                         <form action="{{ route('logout') }}" method="POST" class="d-inline">
                             @csrf
-                            <button class="btn btn-outline-light btn-sm" type="submit">
-                                Logout
-                            </button>
+                            <button class="btn btn-outline-light btn-sm" type="submit">Logout</button>
                         </form>
                     </li>
                 @else
@@ -110,36 +123,47 @@
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
-{{-- TinyMCE CDN (v5, no key required) --}}
+{{-- TinyMCE --}}
 <script src="https://cdn.jsdelivr.net/npm/tinymce@5.10.9/tinymce.min.js" referrerpolicy="origin"></script>
 <script>
     document.addEventListener('DOMContentLoaded', function () {
         tinymce.init({
             selector: 'textarea.rich-text',
-            menubar: false,
-            plugins: 'lists link linkchecker code',
-            toolbar: 'undo redo | styles | bold italic underline | bullist numlist | link | code',
-            height: 300,
-            branding: false,
+            height: 450,
+            menubar: true,
+            plugins: [
+                "advlist autolink lists link image charmap preview anchor",
+                "searchreplace visualblocks code fullscreen",
+                "insertdatetime media table paste code help wordcount",
+                "emoticons hr codesample"
+            ],
+            toolbar: `
+                undo redo |
+                styleselect | fontselect fontsizeselect |
+                bold italic underline strikethrough forecolor backcolor |
+                alignleft aligncenter alignright alignjustify |
+                bullist numlist outdent indent blockquote |
+                link image media emoticons |
+                table hr codesample |
+                removeformat preview fullscreen
+            `,
+            toolbar_mode: 'sliding',
+            content_style: "body { font-family:Arial,sans-serif; font-size:16px }",
+
             setup: function (editor) {
-                // jab bhi content change ho, textarea ko sync kar do
                 editor.on('change', function () {
                     editor.save();
                 });
-            }
+            },
+
+            branding: false
         });
 
-        // Form submit hone se pehle sab editor ka content textarea me daal do
-        document.querySelectorAll('form').forEach(function (form) {
-            form.addEventListener('submit', function () {
-                if (typeof tinymce !== 'undefined') {
-                    tinymce.triggerSave();
-                }
-            });
+        document.querySelectorAll('form').forEach(function(form){
+            form.addEventListener('submit', () => tinymce.triggerSave());
         });
     });
 </script>
-
 
 
 </body>

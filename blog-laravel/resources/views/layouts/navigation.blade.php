@@ -11,7 +11,6 @@
                 <li class="nav-item">
                     <a href="{{ route('posts.index') }}" class="nav-link">Home</a>
                 </li>
-
                         @auth
                             <li class="nav-item">
                                 <a href="{{ route('posts.create') }}" class="nav-link">Create Post</a>

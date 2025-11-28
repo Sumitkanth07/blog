@@ -73,8 +73,6 @@ public function update(Request $request, string $slug)
         'image' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
     ]);
 
-    // slug ko update karna hai ya nahi?  
-    // Abhi ke liye change karenge, taki title change ho to URL bhi update ho jaye
     $data['slug'] = Str::slug($data['title']) . '-' . time();
 
     if ($request->hasFile('image')) {

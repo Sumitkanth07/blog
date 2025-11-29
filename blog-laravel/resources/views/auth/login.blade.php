@@ -5,7 +5,7 @@
     {{-- Google Login --}}
     <div class="mt-6">
         <a
-            href="{{ route('google.redirect') }}"
+            href="/auth/google/redirect"
             class="w-full inline-flex justify-center items-center px-4 py-2 border border-transparent text-sm font-medium
                    rounded-md text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2
                    focus:ring-red-500"
@@ -25,7 +25,7 @@
         <span class="text-gray-500 text-sm">or continue with email</span>
     </div>
 
-    <form method="POST" action="{{ route('login') }}" class="mt-4">
+    <form method="POST" action="/login" class="mt-4">
         @csrf
 
         <!-- Email Address -->
@@ -52,7 +52,7 @@
 
         <!-- Actions -->
         <div class="flex items-center justify-between mt-4">
-            <a class="underline text-sm text-gray-600 hover:text-gray-900" href="{{ route('register') }}">
+            <a class="underline text-sm text-gray-600 hover:text-gray-900" href="/register">
                 Create Account
             </a>
 

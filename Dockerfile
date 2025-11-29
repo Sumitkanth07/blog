@@ -8,7 +8,11 @@ WORKDIR /app
 RUN apt-get update && apt-get install -y \
     git \
     unzip \
+    sqlite3 \
+    libsqlite3-dev \
+    pkg-config \
     && docker-php-ext-install pdo pdo_sqlite
+
 
 # Copy only the Laravel app folder into container
 # Local:  blog-laravel/

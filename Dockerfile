@@ -1,35 +1,32 @@
-# Use PHP 8.2 CLI image
+# Use official PHP image
 FROM php:8.2-cli
 
-# Install system dependencies and PHP extensions
+# Workdir inside container
+WORKDIR /app
+
+# System deps + sqlite extension
 RUN apt-get update && apt-get install -y \
-    git curl zip unzip libonig-dev libxml2-dev libzip-dev \
-    sqlite3 libsqlite3-dev \
-    && docker-php-ext-install pdo pdo_mysql pdo_sqlite mbstring
+    git \
+    unzip \
+    && docker-php-ext-install pdo pdo_sqlite
+
+# Copy only the Laravel app folder into container
+# Local:  blog-laravel/
+# Inside container: /app/
+COPY blog-laravel/ .
 
 # Install Composer
-COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
+RUN php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');" \
+    && php composer-setup.php --install-dir=/usr/local/bin --filename=composer \
+    && rm composer-setup.php
 
-# Set working directory inside the container
-WORKDIR /var/www/html
-
-# Copy the full Laravel application from blog-laravel folder
-COPY blog-laravel ./
-
-# Install PHP dependencies (now artisan is present)
+# Install PHP dependencies
 RUN composer install --no-dev --optimize-autoloader
 
-# Create .env from .env.example and generate app key
-RUN cp .env.example .env && php artisan key:generate
+# Clear caches so latest env load ho
+RUN php artisan config:clear && php artisan route:clear && php artisan cache:clear
 
-# Set permissions for storage and cache
-RUN chmod -R 777 storage bootstrap/cache
-
-# Expose port for the PHP built-in server
-EXPOSE 8000
-
-# Command to run when the container starts
-CMD touch /tmp/database.sqlite \
-    && php artisan migrate --force \
-    && php artisan storage:link || true \
-    && php artisan serve --host=0.0.0.0 --port=8000
+# Start: migrate, storage link, then serve
+CMD php artisan migrate --force && \
+    php artisan storage:link || true && \
+    php artisan serve --host 0.0.0.0 --port ${PORT:-10000}

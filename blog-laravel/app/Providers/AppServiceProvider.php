@@ -22,7 +22,7 @@ class AppServiceProvider extends ServiceProvider
     {
         //url forceschematps
         if ($this->app->environment('production')) {
-            URL::forceScheme('https');
+            URL::forceScheme('https'); 
         }
     }
 }

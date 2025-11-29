@@ -91,8 +91,8 @@ Route::get('/auth/google/redirect', function () {
 })->name('google.redirect');
 
 Route::get('/auth/google/callback', function () {
-    // stateless() added to avoid InvalidStateException in local dev
-    $googleUser = Socialite::driver('google')->stateless()->user();
+    // Get the authenticated user from Google
+    $googleUser = Socialite::driver('google')->user();
 
     $user = User::updateOrCreate(
         ['email' => $googleUser->getEmail()],

@@ -21,7 +21,7 @@ use Illuminate\Support\Str;
 // Homepage - list of all posts
 Route::get('/', [PostController::class, 'index'])->name('posts.index');
 
-// Optional: /posts also shows the list of posts
+// /posts also shows the list of posts
 Route::get('/posts', [PostController::class, 'index'])->name('posts');
 
 /*
@@ -91,7 +91,8 @@ Route::get('/auth/google/redirect', function () {
 })->name('google.redirect');
 
 Route::get('/auth/google/callback', function () {
-    $googleUser = Socialite::driver('google')->user();
+    // stateless() added to avoid InvalidStateException in local dev
+    $googleUser = Socialite::driver('google')->stateless()->user();
 
     $user = User::updateOrCreate(
         ['email' => $googleUser->getEmail()],
@@ -111,9 +112,6 @@ Route::get('/auth/google/callback', function () {
 |--------------------------------------------------------------------------
 | Auth Routes (Laravel Breeze)
 |--------------------------------------------------------------------------
-|
-| Includes default authentication routes: login, register, password reset, etc.
-|
 */
 
 require __DIR__ . '/auth.php';

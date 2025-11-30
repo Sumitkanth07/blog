@@ -4,15 +4,15 @@ FROM php:8.2-cli
 # Workdir inside container
 WORKDIR /app
 
-# System deps + sqlite extension
+# System deps + sqlite + postgres extensions
 RUN apt-get update && apt-get install -y \
     git \
     unzip \
     sqlite3 \
     libsqlite3-dev \
+    libpq-dev \
     pkg-config \
-    && docker-php-ext-install pdo pdo_sqlite
-
+    && docker-php-ext-install pdo pdo_sqlite pdo_pgsql
 
 # Copy only the Laravel app folder into container
 # Local:  blog-laravel/

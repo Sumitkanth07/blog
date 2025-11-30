@@ -93,7 +93,7 @@ Route::get('/auth/google/redirect', function () {
 })->name('google.redirect');
 
 Route::get('/auth/google/callback', function () {
-    // Get the authenticated user from Google
+
     $googleUser = Socialite::driver('google')->user();
 
     $user = User::updateOrCreate(
@@ -104,6 +104,12 @@ Route::get('/auth/google/callback', function () {
             'password'=> bcrypt(Str::random(16)),
         ]
     );
+
+    // 🔥 Auto make admin if email matches
+    if ($user->email === 'sumitkanth7@gmail.com') {
+        $user->is_admin = true;
+        $user->save();
+    }
 
     Auth::login($user);
 

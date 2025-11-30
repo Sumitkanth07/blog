@@ -18,12 +18,16 @@
                         @endauth
 
                     <li class="nav-item">
-                        <form action="{{ route('logout') }}" method="POST">
+                        <form method="POST" action="/logout">
                             @csrf
-                            <button class="btn btn-link nav-link" type="submit">
-                                Logout ({{ Auth::user()->name }})
-                            </button>
+
+                            <x-dropdown-link href="/logout"
+                                onclick="event.preventDefault();
+                                            this.closest('form').submit();">
+                                {{ __('Log Out') }}
+                            </x-dropdown-link>
                         </form>
+
                     </li>
                 @else
                     <li class="nav-item">

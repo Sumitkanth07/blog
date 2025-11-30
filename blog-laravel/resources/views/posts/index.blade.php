@@ -69,13 +69,13 @@
                                                 Delete
                                             </button>
                                         </form>
-                                    @endif
+                                    @endif 
                                 </div>
                             </div>
-                        </div>
+                        </div> 
                 </div>
             </div>
-        @endforeach
+        @endforeach  
     @else
         <div class="alert alert-info">No posts found. Create your first post!</div>
     @endif

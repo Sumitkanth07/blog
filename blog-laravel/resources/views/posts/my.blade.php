@@ -4,10 +4,11 @@
 
 @section('content')
     <div class="d-flex justify-content-between align-items-center mb-3">
-        <h1 class="h3 mb-0">Latest Posts</h1>
-        @auth
-            <a href="{{ route('posts.create') }}" class="btn btn-primary">+ New Post</a>
-        @endauth
+        <h1 class="h3 mb-0">My Posts</h1>
+
+        <a href="{{ route('posts.create') }}" class="btn btn-primary">
+            + New Post
+        </a>
     </div>
 
     @if ($posts->count())
@@ -35,10 +36,6 @@
                                 </h2>
 
                                 <p class="text-muted mb-1 small">
-                                    {{-- Author + Date --}}
-                                    @if($post->user ?? false)
-                                        By {{ $post->user->name }} ·
-                                    @endif
                                     {{ $post->created_at->format('d M Y, h:i A') }}
                                 </p>
 
@@ -49,27 +46,26 @@
                                 <div class="d-flex align-items-center gap-2">
                                     <a href="{{ route('posts.show', ['slug' => $post->slug]) }}"
                                        class="btn btn-sm btn-outline-primary">
-                                        Read more →
+                                        View →
                                     </a>
 
-                                    {{-- Sirf apne post (ya admin) ke liye Edit/Delete buttons --}}
-                                    @if(auth()->check() && (auth()->id() === $post->user_id || auth()->user()->is_admin))
-                                        <a href="{{ route('posts.edit', ['slug' => $post->slug]) }}"
-                                           class="btn btn-sm btn-outline-warning">
-                                            Edit
-                                        </a>
+                                    {{-- Yaha pe hamesha edit/delete dikh sakta hai,
+                                         kyunki controller already sirf current user ke posts bhej raha hai --}}
+                                    <a href="{{ route('posts.edit', ['slug' => $post->slug]) }}"
+                                       class="btn btn-sm btn-outline-warning">
+                                        Edit
+                                    </a>
 
-                                        <form action="{{ route('posts.destroy', ['slug' => $post->slug]) }}"
-                                              method="POST"
-                                              onsubmit="return confirm('Delete this post?')"
-                                              class="d-inline">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" class="btn btn-sm btn-outline-danger">
-                                                Delete
-                                            </button>
-                                        </form>
-                                    @endif
+                                    <form action="{{ route('posts.destroy', ['slug' => $post->slug]) }}"
+                                          method="POST"
+                                          onsubmit="return confirm('Delete this post?')"
+                                          class="d-inline">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="btn btn-sm btn-outline-danger">
+                                            Delete
+                                        </button>
+                                    </form>
                                 </div>
                             </div>
                         </div>
@@ -77,6 +73,8 @@
             </div>
         @endforeach
     @else
-        <div class="alert alert-info">No posts found. Create your first post!</div>
+        <div class="alert alert-info">
+            You haven't created any posts yet. Start by creating your first post!
+        </div>
     @endif
 @endsection

@@ -11,24 +11,48 @@
                 <li class="nav-item">
                     <a href="{{ route('posts.index') }}" class="nav-link">Home</a>
                 </li>
-                        @auth
-                            <li class="nav-item">
-                                <a href="{{ route('posts.create') }}" class="nav-link">Create Post</a>
-                            </li>
-                        @endauth
 
+                @auth
                     <li class="nav-item">
-                        <form method="POST" action="/logout">
-                            @csrf
-
-                            <x-dropdown-link href="/logout"
-                                onclick="event.preventDefault();
-                                            this.closest('form').submit();">
-                                {{ __('Log Out') }}
-                            </x-dropdown-link>
-                        </form>
-
+                        <a href="{{ route('posts.create') }}" class="nav-link">Create Post</a>
                     </li>
+
+                    {{-- Dropdown: Username --}}
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle"
+                           href="#" id="userMenu"
+                           role="button" data-bs-toggle="dropdown">
+                            {{ Auth::user()->name }}
+                        </a>
+
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userMenu">
+
+                            <li>
+                                <a class="dropdown-item" href="{{ route('posts.my') }}">
+                                    My Posts
+                                </a>
+                            </li>
+
+                            <li>
+                                <a class="dropdown-item" href="{{ route('profile.edit') }}">
+                                    Profile
+                                </a>
+                            </li>
+
+                            <li><hr class="dropdown-divider"></li>
+
+                            {{-- Logout --}}
+                            <li>
+                                <form action="{{ route('logout') }}" method="POST">
+                                    @csrf
+                                    <button class="dropdown-item" type="submit">
+                                        Logout
+                                    </button>
+                                </form>
+                            </li>
+                        </ul>
+                    </li>
+
                 @else
                     <li class="nav-item">
                         <a href="{{ route('login') }}" class="nav-link">Login</a>

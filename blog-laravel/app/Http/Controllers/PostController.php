@@ -5,16 +5,30 @@ namespace App\Http\Controllers;
 use App\Models\Post;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Auth;
 
 class PostController extends Controller
 {
-    // Homepage - all posts
+    // Homepage - all posts (public)
     public function index()
     {
         // Public: sab posts dikh sakti hain
-        $posts = Post::latest()->get();
+        $posts = Post::latest()
+            ->with('user')   // $post->user->name use karne ke liye
+            ->get();
 
         return view('posts.index', compact('posts'));
+    }
+
+    // Sirf logged-in user ke posts
+    public function myPosts()
+    {
+        $posts = Post::where('user_id', Auth::id())
+            ->latest()
+            ->with('user')
+            ->get();
+
+        return view('posts.my', compact('posts'));
     }
 
     // Show create form (only for logged-in users - auth middleware in routes)
@@ -41,8 +55,8 @@ class PostController extends Controller
             $data['image_path'] = $path;
         }
 
-        // 👇 Jis user ne login kiya hai, wohi owner hoga
-        $data['user_id'] = auth()->id();
+        // Jis user ne login kiya hai, wohi owner hoga
+        $data['user_id'] = Auth::id();
 
         Post::create($data);
 
@@ -54,30 +68,32 @@ class PostController extends Controller
     // Show single post by slug (public)
     public function show(string $slug)
     {
-        $post = Post::where('slug', $slug)->firstOrFail();
+        $post = Post::where('slug', $slug)
+            ->with('user')
+            ->firstOrFail();
 
         return view('posts.show', compact('post'));
     }
 
-    // Show edit form - only owner
+    // Show edit form - only owner or admin
     public function edit(string $slug)
     {
         $post = Post::where('slug', $slug)->firstOrFail();
 
-        // 👇 Agar current user owner nahi hai -> 403
-        if ($post->user_id !== auth()->id()) {
+        // Agar current user admin nahi hai aur owner bhi nahi -> 403
+        if (!Auth::user()->is_admin && $post->user_id !== Auth::id()) {
             abort(403, 'You are not allowed to edit this post.');
         }
 
         return view('posts.edit', compact('post'));
     }
 
-    // Update post - only owner
+    // Update post - only owner or admin
     public function update(Request $request, string $slug)
     {
         $post = Post::where('slug', $slug)->firstOrFail();
 
-        if ($post->user_id !== auth()->id()) {
+        if (!Auth::user()->is_admin && $post->user_id !== Auth::id()) {
             abort(403, 'You are not allowed to update this post.');
         }
 
@@ -94,7 +110,7 @@ class PostController extends Controller
             $data['image_path'] = $path;
         }
 
-        // NOTE: yahan user_id change nahi kar rahe
+        // yahan user_id change nahi kar rahe
         $post->update($data);
 
         return redirect()
@@ -102,12 +118,12 @@ class PostController extends Controller
             ->with('success', 'Post updated successfully!');
     }
 
-    // Delete post - only owner
+    // Delete post - only owner or admin
     public function destroy(string $slug)
     {
         $post = Post::where('slug', $slug)->firstOrFail();
 
-        if ($post->user_id !== auth()->id()) {
+        if (!Auth::user()->is_admin && $post->user_id !== Auth::id()) {
             abort(403, 'You are not allowed to delete this post.');
         }
 

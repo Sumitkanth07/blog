@@ -38,8 +38,11 @@
                 Published on {{ $post->created_at->format('d M Y, h:i A') }}
             </p>
 
+            {{-- Cloudinary Image Display (UPDATED) --}}
             @if (!empty($post->image_path))
-                <img src="{{ asset('storage/' . $post->image_path) }}" class="img-fluid mb-3 rounded" alt="{{ $post->title }}">
+                <img src="{{ $post->image_path }}"
+                     class="img-fluid mb-3 rounded"
+                     alt="{{ $post->title }}">
             @endif
 
             <div style="white-space: pre-line;">

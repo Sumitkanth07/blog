@@ -17,7 +17,8 @@
                     @if (!empty($post->image_path))
                         <div class="col-md-4">
                             <a href="{{ route('posts.show', ['slug' => $post->slug]) }}">
-                                <img src="{{ asset('storage/' . $post->image_path) }}"
+                                {{-- yaha change kiya hai --}}
+                                <img src="{{ $post->image_path }}"
                                      class="home-post-thumb"
                                      alt="{{ $post->title }}">
                             </a>
@@ -35,7 +36,6 @@
                                 </h2>
 
                                 <p class="text-muted mb-1 small">
-                                    {{-- Author + Date --}}
                                     @if($post->user ?? false)
                                         By {{ $post->user->name }} ·
                                     @endif
@@ -52,7 +52,6 @@
                                         Read more →
                                     </a>
 
-                                    {{-- Sirf apne post (ya admin) ke liye Edit/Delete buttons --}}
                                     @if(auth()->check() && (auth()->id() === $post->user_id || auth()->user()->is_admin))
                                         <a href="{{ route('posts.edit', ['slug' => $post->slug]) }}"
                                            class="btn btn-sm btn-outline-warning">

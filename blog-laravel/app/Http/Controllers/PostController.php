@@ -6,7 +6,7 @@ use App\Models\Post;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Auth;
-use Cloudinary\Cloudinary;   // <-- PHP SDK
+use Cloudinary\Cloudinary;   // PHP SDK
 
 class PostController extends Controller
 {
@@ -14,21 +14,16 @@ class PostController extends Controller
 
     public function __construct()
     {
-        // CLOUDINARY_URL env se direct config
+        // CLOUDINARY_URL env se config load
         $this->cloudinary = new Cloudinary(env('CLOUDINARY_URL'));
     }
 
-    // Homepage - all posts (public)
     public function index()
     {
-        $posts = Post::latest()
-            ->with('user')
-            ->get();
-
+        $posts = Post::latest()->with('user')->get();
         return view('posts.index', compact('posts'));
     }
 
-    // Sirf logged-in user ke posts
     public function myPosts()
     {
         $posts = Post::where('user_id', Auth::id())
@@ -44,7 +39,6 @@ class PostController extends Controller
         return view('posts.create');
     }
 
-    // Store new post with Cloudinary upload
     public function store(Request $request)
     {
         $data = $request->validate([
@@ -60,10 +54,9 @@ class PostController extends Controller
                 ->uploadApi()
                 ->upload(
                     $request->file('image')->getRealPath(),
-                    ['folder' => 'laravel-blog/posts'] // optional folder
+                    ['folder' => 'laravel-blog/posts']
                 );
 
-            // secure_url me full https URL hota hai
             $data['image_path'] = $upload['secure_url'] ?? null;
         }
 

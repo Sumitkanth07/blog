@@ -6,10 +6,18 @@ use App\Models\Post;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Auth;
-use CloudinaryLabs\CloudinaryLaravel\Facades\Cloudinary;
+use Cloudinary\Cloudinary;   // <-- PHP SDK
 
 class PostController extends Controller
 {
+    protected Cloudinary $cloudinary;
+
+    public function __construct()
+    {
+        // CLOUDINARY_URL env se direct config
+        $this->cloudinary = new Cloudinary(env('CLOUDINARY_URL'));
+    }
+
     // Homepage - all posts (public)
     public function index()
     {
@@ -48,12 +56,15 @@ class PostController extends Controller
         $data['slug'] = Str::slug($data['title']) . '-' . time();
 
         if ($request->hasFile('image')) {
-            // Upload to Cloudinary using facade
-            $imageUrl = Cloudinary::upload(
-                $request->file('image')->getRealPath()
-            )->getSecurePath();
+            $upload = $this->cloudinary
+                ->uploadApi()
+                ->upload(
+                    $request->file('image')->getRealPath(),
+                    ['folder' => 'laravel-blog/posts'] // optional folder
+                );
 
-            $data['image_path'] = $imageUrl;
+            // secure_url me full https URL hota hai
+            $data['image_path'] = $upload['secure_url'] ?? null;
         }
 
         $data['user_id'] = Auth::id();
@@ -102,11 +113,14 @@ class PostController extends Controller
         $data['slug'] = Str::slug($data['title']) . '-' . time();
 
         if ($request->hasFile('image')) {
-            $imageUrl = Cloudinary::upload(
-                $request->file('image')->getRealPath()
-            )->getSecurePath();
+            $upload = $this->cloudinary
+                ->uploadApi()
+                ->upload(
+                    $request->file('image')->getRealPath(),
+                    ['folder' => 'laravel-blog/posts']
+                );
 
-            $data['image_path'] = $imageUrl;
+            $data['image_path'] = $upload['secure_url'] ?? null;
         }
 
         $post->update($data);

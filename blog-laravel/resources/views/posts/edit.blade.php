@@ -19,6 +19,7 @@
         @csrf
         @method('PUT')
 
+        {{-- Title --}}
         <div class="mb-3">
             <label for="title" class="form-label">Title</label>
             <input
@@ -36,18 +37,21 @@
             @enderror
         </div>
 
-        {{-- CURRENT IMAGE FIX --}}
+        {{-- CURRENT IMAGE (SMALL THUMBNAIL) --}}
         @if ($post->image_path)
             <div class="mb-3">
-                <label class="form-label">Current Image</label><br>
+                <label class="form-label d-block">Current Image</label>
 
-                <img src="{{ url('storage/' . $post->image_path) }}"
-                     alt="{{ $post->title }}"
-                     class="img-fluid rounded mb-2"
-                     style="max-height: 200px;">
+                <img
+                    src="{{ url('storage/' . $post->image_path) }}"
+                    alt="{{ $post->title }}"
+                    class="img-thumbnail mb-2"
+                    style="max-width: 200px; max-height: 200px; object-fit: cover;"
+                >
             </div>
         @endif
 
+        {{-- CHANGE IMAGE + LIVE PREVIEW --}}
         <div class="mb-3">
             <label for="image" class="form-label">Change Image (optional)</label>
             <input
@@ -62,8 +66,17 @@
                 {{ $message }}
             </div>
             @enderror
+
+            {{-- New Image Preview (hidden until user selects file) --}}
+            <div id="new-image-preview-wrapper" class="mt-2 d-none">
+                <small class="text-muted d-block mb-1">New Image Preview</small>
+                <img id="new-image-preview"
+                     class="img-thumbnail"
+                     style="max-width: 200px; max-height: 200px; object-fit: cover;">
+            </div>
         </div>
 
+        {{-- Content --}}
         <div class="mb-3">
             <label for="body" class="form-label">Content</label>
             <textarea
@@ -83,4 +96,29 @@
         <button type="submit" class="btn btn-success">Update Post</button>
         <a href="{{ route('posts.show', ['slug' => $post->slug]) }}" class="btn btn-secondary ms-2">Cancel</a>
     </form>
+
+    {{-- SIMPLE JS FOR LIVE IMAGE PREVIEW --}}
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const fileInput  = document.getElementById('image');
+            const wrapper    = document.getElementById('new-image-preview-wrapper');
+            const previewImg = document.getElementById('new-image-preview');
+
+            if (fileInput) {
+                fileInput.addEventListener('change', function (e) {
+                    const file = this.files && this.files[0];
+
+                    if (!file) {
+                        wrapper.classList.add('d-none');
+                        previewImg.removeAttribute('src');
+                        return;
+                    }
+
+                    const url = URL.createObjectURL(file);
+                    previewImg.src = url;
+                    wrapper.classList.remove('d-none');
+                });
+            }
+        });
+    </script>
 @endsection

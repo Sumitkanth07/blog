@@ -18,6 +18,7 @@
     <form action="{{ route('posts.store') }}" method="POST" enctype="multipart/form-data">
         @csrf
 
+        {{-- Title --}}
         <div class="mb-3">
             <label for="title" class="form-label">Title</label>
             <input
@@ -35,6 +36,7 @@
             @enderror
         </div>
 
+        {{-- Featured Image + Preview --}}
         <div class="mb-3">
             <label for="image" class="form-label">Featured Image (optional)</label>
             <input
@@ -49,8 +51,17 @@
                 {{ $message }}
             </div>
             @enderror
+
+            {{-- Live preview (hidden until file selected) --}}
+            <div id="create-image-preview-wrapper" class="mt-2 d-none">
+                <small class="text-muted d-block mb-1">Image Preview</small>
+                <img id="create-image-preview"
+                     class="img-thumbnail"
+                     style="max-width: 200px; max-height: 200px; object-fit: cover;">
+            </div>
         </div>
 
+        {{-- Content --}}
         <div class="mb-3">
             <label for="body" class="form-label">Content</label>
             <textarea
@@ -70,4 +81,29 @@
         <button type="submit" class="btn btn-success">Save Post</button>
         <a href="{{ route('posts.index') }}" class="btn btn-secondary ms-2">Cancel</a>
     </form>
+
+    {{-- JS: live image preview on create --}}
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const fileInput  = document.getElementById('image');
+            const wrapper    = document.getElementById('create-image-preview-wrapper');
+            const previewImg = document.getElementById('create-image-preview');
+
+            if (fileInput) {
+                fileInput.addEventListener('change', function () {
+                    const file = this.files && this.files[0];
+
+                    if (!file) {
+                        wrapper.classList.add('d-none');
+                        previewImg.removeAttribute('src');
+                        return;
+                    }
+
+                    const url = URL.createObjectURL(file);
+                    previewImg.src = url;
+                    wrapper.classList.remove('d-none');
+                });
+            }
+        });
+    </script>
 @endsection

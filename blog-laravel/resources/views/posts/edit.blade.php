@@ -39,15 +39,25 @@
 
         {{-- CURRENT IMAGE (SMALL THUMBNAIL) --}}
         @if ($post->image_path)
+            @php
+                // Exactly same pattern as index/show page
+                $imageUrl = asset('storage/' . ltrim($post->image_path, '/'));
+            @endphp
+
             <div class="mb-3">
                 <label class="form-label d-block">Current Image</label>
 
                 <img
-                    src="{{ url('storage/' . $post->image_path) }}"
+                    src="{{ $imageUrl }}"
                     alt="{{ $post->title }}"
                     class="img-thumbnail mb-2"
                     style="max-width: 200px; max-height: 200px; object-fit: cover;"
                 >
+
+                {{-- Debug: show actual URL so you can open it in new tab if needed --}}
+                <small class="text-muted d-block" style="word-break: break-all;">
+                    {{ $imageUrl }}
+                </small>
             </div>
         @endif
 
@@ -105,7 +115,7 @@
             const previewImg = document.getElementById('new-image-preview');
 
             if (fileInput) {
-                fileInput.addEventListener('change', function (e) {
+                fileInput.addEventListener('change', function () {
                     const file = this.files && this.files[0];
 
                     if (!file) {

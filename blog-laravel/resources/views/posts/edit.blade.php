@@ -1,5 +1,9 @@
 @extends('layouts.app')
 
+@php
+    use Illuminate\Support\Str;
+@endphp
+
 @section('content')
     <h1 class="h3 mb-4">Edit Post</h1>
 
@@ -40,8 +44,15 @@
         {{-- CURRENT IMAGE (SMALL THUMBNAIL) --}}
         @if ($post->image_path)
             @php
-                // Exactly same pattern as index/show page
-                $imageUrl = asset('storage/' . ltrim($post->image_path, '/'));
+                $path = ltrim($post->image_path, '/');
+
+                // Agar Cloudinary / external URL hai to as-it-is use karo
+                if (Str::startsWith($path, ['http://', 'https://'])) {
+                    $imageUrl = $path;
+                } else {
+                    // Local storage wali image
+                    $imageUrl = asset('storage/' . $path);
+                }
             @endphp
 
             <div class="mb-3">
@@ -54,7 +65,7 @@
                     style="max-width: 200px; max-height: 200px; object-fit: cover;"
                 >
 
-                {{-- Debug: show actual URL so you can open it in new tab if needed --}}
+                {{-- Debug URL (optional, chahe to hata sakta hai) --}}
                 <small class="text-muted d-block" style="word-break: break-all;">
                     {{ $imageUrl }}
                 </small>

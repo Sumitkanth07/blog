@@ -44,7 +44,7 @@ class PostController extends Controller
         $data = $request->validate([
             'title' => 'required|max:255',
             'body'  => 'required',
-            'image' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:4048',
+            'image' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:5048',
         ]);
 
         $data['slug'] = Str::slug($data['title']) . '-' . time();

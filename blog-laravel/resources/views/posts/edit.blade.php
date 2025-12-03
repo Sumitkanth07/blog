@@ -36,10 +36,15 @@
             @enderror
         </div>
 
+        {{-- CURRENT IMAGE FIX --}}
         @if ($post->image_path)
             <div class="mb-3">
                 <label class="form-label">Current Image</label><br>
-                <img src="{{ asset('storage/' . $post->image_path) }}" alt="{{ $post->title }}" class="img-fluid rounded mb-2" style="max-height: 200px;">
+
+                <img src="{{ url('storage/' . $post->image_path) }}"
+                     alt="{{ $post->title }}"
+                     class="img-fluid rounded mb-2"
+                     style="max-height: 200px;">
             </div>
         @endif
 

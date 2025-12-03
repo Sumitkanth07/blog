@@ -64,12 +64,6 @@
                     class="img-thumbnail mb-2"
                     style="max-width: 200px; max-height: 200px; object-fit: cover;"
                 >
-
-                {{-- Debug URL (optional, chahe to hata sakta hai) --}}
-                <small class="text-muted d-block" style="word-break: break-all;">
-                    {{ $imageUrl }}
-                </small>
-            </div>
         @endif
 
         {{-- CHANGE IMAGE + LIVE PREVIEW --}}
